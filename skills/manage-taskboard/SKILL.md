@@ -35,6 +35,6 @@ When writing Chinese, keep the English word or use **本地 companion** / **本�
 
 - Preserve existing issue scope when adding requirements or acceptance details.
 - Add only relations that the work requires. Use parent for contained work, blocks or blocked_by for dependencies, and related for close association.
-- Let `taskctl` read `CODEX_THREAD_ID` for writes. Outside Codex, pass the exact conversation ID with `--thread-id`.
+- Let `taskctl` read `CODEX_THREAD_ID` for writes in Codex. Outside Codex (for example ZCode or Claude Code), set `TASKBOARD_AGENT_ID` plus `TASKBOARD_AGENT_NAME` to attribute writes to this agent instead of the Codex Agent, and pass the exact conversation ID with `--thread-id` or `TASKBOARD_THREAD_ID`.
 - Use the latest returned `version` with `--if-version` for concurrent updates. On conflict, read the issue again and reconcile before retrying.
 - Download and inspect an inline `![alt](api/attachments/<id>/content)` image only when it is needed to understand the requirement.

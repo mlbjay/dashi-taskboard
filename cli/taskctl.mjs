@@ -346,6 +346,7 @@ function createApiClient(overrides, { baseUrl: explicitBaseUrl } = {}) {
 
   const env = overrides.env ?? process.env;
   const baseUrl = normalizeBaseUrl(explicitBaseUrl ?? DEFAULT_API_URL);
+  const agentHeaders = agentHeadersFromEnv(env);
 
   return {
     async request(method, pathname, body) {
@@ -356,6 +357,7 @@ function createApiClient(overrides, { baseUrl: explicitBaseUrl } = {}) {
           headers: {
             accept: "application/json",
             "x-taskboard-client": "taskctl",
+            ...agentHeaders,
             ...(body === undefined ? {} : { "content-type": "application/json" }),
           },
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
@@ -902,15 +904,30 @@ function recurrenceFromOptions(options) {
 
 function resolveThreadId(options, overrides) {
   const env = overrides.env ?? process.env;
-  const value = options["thread-id"] ?? env.CODEX_THREAD_ID;
+  const value = options["thread-id"] ?? env.CODEX_THREAD_ID ?? env.TASKBOARD_THREAD_ID;
   if (typeof value !== "string" || value.trim().length === 0) {
-    throw usageError("Codex conversation attribution requires --thread-id or CODEX_THREAD_ID");
+    throw usageError(
+      "Conversation attribution requires --thread-id, CODEX_THREAD_ID, or TASKBOARD_THREAD_ID",
+    );
   }
   const threadId = value.trim();
   if (threadId.length > 256) {
     throw usageError("--thread-id and CODEX_THREAD_ID cannot exceed 256 characters");
   }
   return threadId;
+}
+
+function agentHeadersFromEnv(env) {
+  const id = env.TASKBOARD_AGENT_ID?.trim();
+  const name = env.TASKBOARD_AGENT_NAME?.trim();
+  if (!id || !name) return {};
+  const headers = {
+    "x-taskboard-agent-id": id,
+    "x-taskboard-agent-name": encodeURIComponent(name),
+  };
+  const avatar = env.TASKBOARD_AGENT_AVATAR?.trim();
+  if (avatar) headers["x-taskboard-agent-avatar"] = avatar;
+  return headers;
 }
 
 function requiredOption(options, name) {

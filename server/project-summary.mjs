@@ -123,16 +123,16 @@ export class ProjectSummaryService {
             generatedSummary = event.item.text.replace(/\s+/g, " ").trim();
           }
           if (event.type === "turn.failed" || event.type === "error") {
-            terminalError = String(event.error?.message ?? event.message ?? "Codex 生成失败");
+            terminalError = String(event.error?.message ?? event.message ?? "总结生成失败");
           }
         },
       });
       active.child = child;
       const result = await completion;
       if (result.exitCode !== 0 || terminalError) {
-        throw new Error(terminalError || `Codex 退出码 ${result.exitCode}`);
+        throw new Error(terminalError || `总结生成器退出码 ${result.exitCode}`);
       }
-      if (!generatedSummary) throw new Error("Codex 没有返回项目总结");
+      if (!generatedSummary) throw new Error("总结生成器没有返回项目总结");
       this.database.saveProjectSummary(projectId, generatedSummary);
     } catch (error) {
       if (!this.closed) {
