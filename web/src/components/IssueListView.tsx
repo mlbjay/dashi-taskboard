@@ -1,5 +1,5 @@
 import { useState, type KeyboardEvent, type MouseEvent, type RefObject } from "react";
-import { assigneeTargetForActor } from "../actors";
+import { assigneeTargetForActor, actorKey, CODEX_AGENT_ACTOR } from "../actors";
 import { taskPriorityLabel, taskStatusLabel, useTaskboardI18n } from "../i18n";
 import { labelPresentation } from "../labels";
 import type { TaskCardPresentation } from "../taskConversations";
@@ -78,7 +78,10 @@ export function IssueListView({
               {!isCollapsed && (
                 <div className="issue-list-rows">
                   {statusTasks.length ? statusTasks.map((task) => {
-                    const assigneeTarget = assigneeTargetForActor(task.assignee, currentUser) ?? "current-user";
+                    const assigneeOptions = [task.assignee, ...(task.participants ?? []), currentUser, CODEX_AGENT_ACTOR]
+                      .filter((actor, index, actors) => (
+                        actors.findIndex((candidate) => actorKey(candidate) === actorKey(actor)) === index
+                      ));
                     const displayIdentifier = task.externalKey ?? task.identifier;
                     return (
                       <div
@@ -149,12 +152,21 @@ export function IssueListView({
                             <ActorAvatar actor={task.assignee} />
                             <select
                               aria-label={text(`${displayIdentifier} 负责人`, `${displayIdentifier} assignee`)}
-                              value={assigneeTarget}
+                              value={actorKey(task.assignee)}
                               disabled={task.source === "jira"}
-                              onChange={(event) => void onUpdate(task, { assigneeTarget: event.target.value as "current-user" | "codex-agent" }).catch(() => {})}
+                              onChange={(event) => {
+                                const selected = assigneeOptions.find((actor) => actorKey(actor) === event.target.value);
+                                const target = selected ? assigneeTargetForActor(selected, currentUser) : undefined;
+                                if (target) void onUpdate(task, { assigneeTarget: target }).catch(() => {});
+                              }}
                             >
-                              <option value="current-user">{currentUser.name}</option>
-                              <option value="codex-agent">Codex Agent</option>
+                              {assigneeOptions.map((actor) => (
+                                <option key={actorKey(actor)} value={actorKey(actor)}>
+                                  {actor.id === currentUser.id
+                                    ? text(`${actor.name}（我）`, `${actor.name} (me)`)
+                                    : actor.name}
+                                </option>
+                              ))}
                             </select>
                           </label>
                         </span>

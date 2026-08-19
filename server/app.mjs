@@ -644,15 +644,39 @@ function actorFromRequest(request) {
 
 function parseAssigneeTarget(value) {
   if (value === undefined) return undefined;
-  if (value !== "current-user" && value !== "codex-agent") {
-    throw new ApiError(400, "INVALID_FIELD", "'assigneeTarget' must be current-user or codex-agent");
+  if (value === "current-user" || value === "codex-agent") return value;
+  if (typeof value !== "object" || value === null || value.type !== "agent") {
+    throw new ApiError(400, "INVALID_FIELD", "'assigneeTarget' must be current-user, codex-agent, or an agent actor");
   }
-  return value;
+  const id = stringField(value.id, "assigneeTarget.id", { required: true, maxLength: 96 });
+  if (!/^[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?$/.test(id)) {
+    throw new ApiError(400, "INVALID_FIELD", "assigneeTarget agent id contains unsupported characters");
+  }
+  const name = stringField(value.name, "assigneeTarget.name", { required: true, maxLength: 120 });
+  const rawAvatarUrl = value.avatarUrl;
+  let avatarUrl = null;
+  if (rawAvatarUrl !== undefined && rawAvatarUrl !== null) {
+    const avatar = stringField(rawAvatarUrl, "assigneeTarget.avatarUrl", { required: true, maxLength: 2048 });
+    let parsed;
+    try {
+      parsed = new URL(avatar);
+    } catch {
+      throw new ApiError(400, "INVALID_FIELD", "assigneeTarget avatar URL is invalid");
+    }
+    if (!["http:", "https:"].includes(parsed.protocol)) {
+      throw new ApiError(400, "INVALID_FIELD", "assigneeTarget avatar URL must use HTTP or HTTPS");
+    }
+    avatarUrl = parsed.toString();
+  }
+  return { type: "agent", id, name, avatarUrl };
 }
 
 function resolveAssignee(target, actor) {
   if (target === undefined) return actor;
   if (target === "codex-agent") return CODEX_AGENT_ACTOR;
+  if (typeof target === "object") {
+    return { type: "agent", id: target.id, name: target.name, avatarUrl: target.avatarUrl };
+  }
   if (actor.type !== "user") {
     throw new ApiError(400, "INVALID_FIELD", "'current-user' requires a user request identity");
   }
