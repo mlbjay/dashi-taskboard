@@ -46,10 +46,15 @@ describe("ActorAvatar", () => {
     expect(imageSrcOf(container)).toBe("codex-agent-logo.png");
   });
 
-  it("shows an initial instead of the Codex logo for other agents", () => {
+  it("shows the ZCode logo for the ZCode Agent without an avatar URL", () => {
     const { container } = render(<ActorAvatar actor={agent("zcode-agent", "ZCode Agent", null)} />);
+    expect(imageSrcOf(container)).toBe("zcode-logo.png");
+  });
+
+  it("shows an initial instead of the Codex logo for other agents", () => {
+    const { container } = render(<ActorAvatar actor={agent("claude-code", "Claude Code", null)} />);
     expect(imageSrcOf(container)).toBeNull();
-    expect(container.textContent).toBe("Z");
+    expect(container.textContent).toBe("C");
   });
 
   it("uses the page host when the avatar URL points at loopback", () => {

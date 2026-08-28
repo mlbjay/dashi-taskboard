@@ -1,5 +1,11 @@
 import type { ActorIdentity } from "../types";
 
+// 特定 agent 的专属 logo 兜底;未列出的 agent 无头像时显示名字首字母。
+const AGENT_FALLBACK_LOGOS: Record<string, string> = {
+  "codex-agent": "codex-agent-logo.png",
+  "zcode-agent": "zcode-logo.png",
+};
+
 // 头像 URL 指向回环地址时,Lan 设备(手机等)会请求自身导致加载失败;
 // 替换为当前页面 host 即可通过局域网访问到同一服务。
 export function resolveAvatarUrlForHost(url: string, pageHostname: string): string {
@@ -34,10 +40,10 @@ export function ActorAvatar({
             alt=""
             referrerPolicy="no-referrer"
           />
-        ) : actor.id === "codex-agent" ? (
+        ) : AGENT_FALLBACK_LOGOS[actor.id] ? (
           <img
             className="actor-avatar-image actor-avatar-agent-image"
-            src="codex-agent-logo.png"
+            src={AGENT_FALLBACK_LOGOS[actor.id]}
             alt=""
           />
         ) : (
