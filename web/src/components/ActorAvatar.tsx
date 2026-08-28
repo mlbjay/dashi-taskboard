@@ -4,6 +4,7 @@ import type { ActorIdentity } from "../types";
 const AGENT_FALLBACK_LOGOS: Record<string, string> = {
   "codex-agent": "codex-agent-logo.png",
   "zcode-agent": "zcode-logo.png",
+  "claude-code": "claude-code-logo.png",
 };
 
 // 头像 URL 指向回环地址时,Lan 设备(手机等)会请求自身导致加载失败;
