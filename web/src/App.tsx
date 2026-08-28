@@ -56,6 +56,7 @@ import {
   uploadAttachment,
   updateTask as updateTaskRequest,
 } from "./api";
+import { randomUuid } from "./uuid";
 import {
   actorKey,
   actorForAssigneeTarget,
@@ -1159,7 +1160,7 @@ export function App() {
     context: AutomationRequestContext,
     automationId?: string,
   ) => {
-    const requestId = window.crypto.randomUUID();
+    const requestId = randomUuid();
     const response = new Promise<AutomationHostResponse>((resolve, reject) => {
       const timeoutId = window.setTimeout(() => {
         pendingAutomationRequestsRef.current.delete(requestId);
@@ -3237,7 +3238,7 @@ export function App() {
     if (openingProjectId) return;
     const name = projectName.trim();
     if (!name) return;
-    const projectId = `temp-${window.crypto.randomUUID()}`;
+    const projectId = `temp-${randomUuid()}`;
     setOpeningProjectId(projectId);
     setActionError(null);
     try {

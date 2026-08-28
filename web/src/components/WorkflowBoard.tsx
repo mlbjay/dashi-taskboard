@@ -44,6 +44,7 @@ import {
   listWorkflowCapabilities,
   saveWorkflowWorkspace,
 } from "../api";
+import { randomUuid } from "../uuid";
 import { useTaskboardI18n } from "../i18n";
 import type { WorkflowCapabilities, WorkflowOption } from "../types";
 import {
@@ -464,7 +465,7 @@ function mergeLegacyWorkspace(
     if (workflowSignature(remoteTab, remoteSnapshot) === workflowSignature(legacyTab, legacySnapshot)) {
       continue;
     }
-    const importedId = `workflow-imported-${crypto.randomUUID()}`;
+    const importedId = `workflow-imported-${randomUuid()}`;
     tabs.push({ id: importedId, name: `${legacyTab.name}（从另一入口导入）` });
     snapshots.set(importedId, normalizeSnapshot(legacySnapshot));
   }
@@ -906,7 +907,7 @@ export function WorkflowBoard({
   const duplicateNode = useCallback((nodeId: string) => {
     const source = nodes.find((candidate) => candidate.id === nodeId);
     if (!source || isWorkflowTriggerKind(source.data.kind) || source.data.kind === "condition") return;
-    const duplicateId = `node-${crypto.randomUUID()}`;
+    const duplicateId = `node-${randomUuid()}`;
     const effectiveSourceCopyDepth = workflowNodeSystemCopyDepth(source.data);
     if (source.parentId) {
       const siblingIds = nodes
@@ -1075,7 +1076,7 @@ export function WorkflowBoard({
 
   function selectStep(item: PaletteItem) {
     if (!pickerTarget) return;
-    const nodeId = `node-${crypto.randomUUID()}`;
+    const nodeId = `node-${randomUuid()}`;
     const newNode: WorkflowCanvasNode = {
       id: nodeId,
       type: "workflow",
@@ -1194,7 +1195,7 @@ export function WorkflowBoard({
 
   function createWorkflow() {
     setWorkflowTabMenu(null);
-    const workflowId = `workflow-${crypto.randomUUID()}`;
+    const workflowId = `workflow-${randomUuid()}`;
     const workflowName = `未命名流程 ${workflowTabs.length + 1}`;
     const emptyFlow = createWorkflowFlow();
     workflowSnapshotsRef.current.set(workflowId, {

@@ -143,7 +143,11 @@ export async function getJiraConnection(signal?: AbortSignal): Promise<JiraConne
   } catch (error) {
     if (
       error instanceof ApiError
-      && (error.code === "LOCAL_COMPANION_REQUIRED" || error.status === 404)
+      && (
+        error.code === "LOCAL_COMPANION_REQUIRED"
+        || error.status === 404
+        || error.code === "LOCAL_ONLY"
+      )
     ) {
       return {
         configured: false,

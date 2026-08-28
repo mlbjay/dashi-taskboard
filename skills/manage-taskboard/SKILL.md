@@ -1,6 +1,6 @@
 ---
 name: manage-taskboard
-description: Manage Codex Taskboard / e-taskboard work with taskctl. Use for taskboard issue IDs, status sync, comments, or taskctl cloud setup—not for unrelated product docs.
+description: Manage dashi-taskboard / Codex Taskboard（任务板）work with taskctl. Use for taskboard issue IDs, status sync, comments, or taskctl cloud setup—not for unrelated product docs. 别名: dashi、任务板、taskboard。
 ---
 
 # Manage Taskboard
