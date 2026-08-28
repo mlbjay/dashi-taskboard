@@ -414,10 +414,10 @@ export function DashboardView({
 
   const summaryBody = projectSummary?.summary
     ?? (summaryLoadFailed || projectSummary?.error
-      ? text("Codex 暂时无法生成项目总结。", "Codex cannot generate the project summary now.")
+      ? text("项目总结暂时无法生成。", "The project summary cannot be generated now.")
       : text(
-          "Codex 正在整理当前项目的进展、风险和下一步重点…",
-          "Codex is reviewing the project's progress, risks, and next steps…",
+          "正在整理当前项目的进展、风险和下一步重点…",
+          "Reviewing the project's progress, risks, and next steps…",
         ));
   const hour = new Date().getHours();
   const greeting = hour < 12

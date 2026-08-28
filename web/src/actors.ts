@@ -15,13 +15,19 @@ export function actorForAssigneeTarget(
   target: AssigneeTarget,
   currentUser: ActorIdentity,
 ): ActorIdentity {
-  return target === "codex-agent" ? CODEX_AGENT_ACTOR : currentUser;
+  if (target === "codex-agent") return CODEX_AGENT_ACTOR;
+  if (typeof target === "object") return target;
+  return currentUser;
 }
 
 export function assigneeTargetForActor(
   actor: ActorIdentity,
   currentUser: ActorIdentity,
 ): AssigneeTarget | undefined {
-  if (actor.type === "agent") return "codex-agent";
+  if (actor.type === "agent") {
+    return actor.id === "codex-agent"
+      ? "codex-agent"
+      : { type: "agent", id: actor.id, name: actor.name, avatarUrl: actor.avatarUrl };
+  }
   return actor.id === currentUser.id ? "current-user" : undefined;
 }

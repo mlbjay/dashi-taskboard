@@ -38,7 +38,7 @@ taskctl cloud logout [--json]
 
 `cloud login` reads the shared password from a private `Shared key:` prompt. The actor name is the display attribution sent through Basic Authentication. The local companion stores its configuration with mode `0600`; project mappings stay on the current device and can differ between collaborators. In cloud mode, failed upstream writes fail rather than falling back to or double-writing the local SQLite database.
 
-Every issue or comment write must be attributed to a Codex conversation. In Codex, `taskctl` reads the current conversation from `CODEX_THREAD_ID`. Outside Codex, pass `--thread-id ID` explicitly. An explicit option takes precedence over the environment. Read commands do not require a conversation id.
+Every issue or comment write must be attributed to a conversation. In Codex, `taskctl` reads the current conversation from `CODEX_THREAD_ID` and is attributed as the Codex Agent. Outside Codex, pass `--thread-id ID` explicitly or set `TASKBOARD_THREAD_ID`, and declare the agent identity with `TASKBOARD_AGENT_ID` (for example `zcode-agent`) plus `TASKBOARD_AGENT_NAME` (for example `ZCode Agent`) so writes are attributed to that agent instead of the Codex Agent. An explicit `--thread-id` takes precedence over the environment variables. Read commands do not require a conversation id.
 
 Every successful command writes one JSON object with `schemaVersion` to stdout. The current schema version is `2`. Errors write one JSON object to stderr. Exit codes are `0` for success, `2` for invalid input, `3` when the service is unavailable, `4` for API or response errors, and `5` for conflicts.
 

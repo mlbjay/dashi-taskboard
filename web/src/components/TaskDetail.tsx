@@ -952,7 +952,7 @@ export function TaskDetail({
   ) {
     developmentOptions.unshift(currentTask.developmentContext);
   }
-  const assigneeOptions = [currentTask.assignee, currentUser, CODEX_AGENT_ACTOR]
+  const assigneeOptions = [currentTask.assignee, ...(currentTask.participants ?? []), currentUser, CODEX_AGENT_ACTOR]
     .filter((actor, index, actors) => (
       actors.findIndex((candidate) => actorKey(candidate) === actorKey(actor)) === index
     ));

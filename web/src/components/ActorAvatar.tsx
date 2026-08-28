@@ -14,11 +14,20 @@ export function ActorAvatar({
       title={actor.name}
     >
       {actor.type === "agent" ? (
-        <img
-          className="actor-avatar-image actor-avatar-agent-image"
-          src="codex-agent-logo.png"
-          alt=""
-        />
+        actor.avatarUrl ? (
+          <img
+            className="actor-avatar-image"
+            src={actor.avatarUrl}
+            alt=""
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <img
+            className="actor-avatar-image actor-avatar-agent-image"
+            src="codex-agent-logo.png"
+            alt=""
+          />
+        )
       ) : actor.avatarUrl ? (
         <img
           className="actor-avatar-image"

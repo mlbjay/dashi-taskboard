@@ -538,7 +538,7 @@ test("issue and comment writes require Codex conversation attribution", async ()
     { env: {} },
   );
   assert.equal(issueResult.exitCode, 2);
-  assert.match(issueResult.stderr.error.message, /--thread-id or CODEX_THREAD_ID/);
+  assert.match(issueResult.stderr.error.message, /--thread-id, CODEX_THREAD_ID, or TASKBOARD_THREAD_ID/);
 
   const commentResult = await run(
     ["comment", "add", "TASK-1", "--body", "No attribution"],
@@ -546,7 +546,7 @@ test("issue and comment writes require Codex conversation attribution", async ()
     { env: {} },
   );
   assert.equal(commentResult.exitCode, 2);
-  assert.match(commentResult.stderr.error.message, /--thread-id or CODEX_THREAD_ID/);
+  assert.match(commentResult.stderr.error.message, /--thread-id, CODEX_THREAD_ID, or TASKBOARD_THREAD_ID/);
 });
 
 test("manual linked-thread options and commands are no longer accepted", async () => {

@@ -15,7 +15,10 @@ test("issue model and editor preserve a concrete assignee identity", async () =>
     source("web/src/components/TaskEditor.tsx"),
   ]);
 
-  assert.match(typesSource, /export type AssigneeTarget = "current-user" \| "codex-agent"/);
+  assert.match(
+    typesSource,
+    /export type AssigneeTarget =\n  \| "current-user"\n  \| "codex-agent"\n  \| \{ type: "agent"; id: string; name: string; avatarUrl: string \| null \};/,
+  );
   assert.match(typesSource, /assignee: ActorIdentity/);
   assert.match(typesSource, /export interface TaskDraft \{[\s\S]*?assigneeTarget\?: AssigneeTarget/);
   assert.match(appSource, /assigneeTarget/);
