@@ -153,6 +153,19 @@ npm run codex:inject -- --port 9229 --open
 | `CODEX_TASKBOARD_DATA_DIR` | `.data` | SQLite 数据目录 |
 | `CODEX_TASKBOARD_URL` | `http://127.0.0.1:47823` | CLI API 源地址 |
 
+### 多 agent 署名(agent 身份归属)
+
+每次议题或评论写入都必须归属到一个对话。在 Codex 中,`taskctl` 读取 `CODEX_THREAD_ID` 并以 Codex Agent 署名。在 Codex 之外(例如 ZCode 或 Claude Code),请设置 agent 身份,使写入显示为该 agent 而不是 Codex Agent:
+
+| 变量 | 示例 | 用途 |
+| --- | --- | --- |
+| `TASKBOARD_AGENT_ID` | `zcode-agent` | agent 身份 id,显示为作者 |
+| `TASKBOARD_AGENT_NAME` | `ZCode Agent` | 显示名字(明文传入,`taskctl` 负责编码) |
+| `TASKBOARD_AGENT_AVATAR` | `https://example.com/avatar.png` | 可选头像 URL;局域网客户端建议使用非回环地址 |
+| `TASKBOARD_THREAD_ID` | `my-session-007` | 写入的对话归属,与 `CODEX_THREAD_ID` 平级 |
+
+对话 ID 用 `--thread-id` 或 `TASKBOARD_THREAD_ID` 传入;显式 `--thread-id` 优先。头像指向 `127.0.0.1` 或 `localhost` 时前端会改写为当前页面 host,局域网设备可正常加载;无头像的 agent 回退显示名字首字母,Codex Agent 保留其 logo。
+
 `npm start` 会输出本地 URL 和可用的局域网 URL。同一受信任网络中的协作者可以打开其中一个局域网 URL，并使用同一个 Taskboard 服务。任务、评论和附件变化通过服务器发送事件广播到所有打开的客户端；客户端重连后会执行完整刷新，因此不会遗漏断开连接期间发生的变化。使用 `taskctl` 的协作者可以通过 `CODEX_TASKBOARD_URL=http://<host-ip>:47823` 指向共享服务。
 
 局域网模式没有账户身份验证：受信任本地网络中任何能访问该 URL 的人都可以读取和写入 Taskboard。公网和云端部署需要经过身份验证的部署边界。

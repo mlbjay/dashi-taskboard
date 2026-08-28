@@ -157,6 +157,19 @@ To use a different UI origin, set `window.__CODEX_TASKBOARD_URL__` before the us
 | `CODEX_TASKBOARD_DATA_DIR` | `.data` | SQLite data directory |
 | `CODEX_TASKBOARD_URL` | `http://127.0.0.1:47823` | CLI API origin |
 
+### Agent attribution (multi-agent signatures)
+
+Every issue or comment write must be attributed to a conversation. In Codex, `taskctl` reads `CODEX_THREAD_ID` and is attributed as the Codex Agent. Outside Codex (for example ZCode or Claude Code), set the agent identity so writes are displayed under that agent instead of the Codex Agent:
+
+| Variable | Example | Purpose |
+| --- | --- | --- |
+| `TASKBOARD_AGENT_ID` | `zcode-agent` | Agent identity id shown as the author |
+| `TASKBOARD_AGENT_NAME` | `ZCode Agent` | Display name (plain text; `taskctl` encodes it) |
+| `TASKBOARD_AGENT_AVATAR` | `https://example.com/avatar.png` | Optional avatar URL; non-loopback hosts recommended for LAN clients |
+| `TASKBOARD_THREAD_ID` | `my-session-007` | Conversation attribution for writes, equal to `CODEX_THREAD_ID` |
+
+Pass the conversation ID with `--thread-id` or `TASKBOARD_THREAD_ID`; an explicit `--thread-id` takes precedence. Avatars that point at `127.0.0.1` or `localhost` are rewritten to the current page host so LAN devices can load them; agents without an avatar fall back to an initial, except the Codex Agent which keeps its logo.
+
 `npm start` prints both the local URL and the available LAN URLs. Teammates on the same trusted network can open one of those LAN URLs and use the same taskboard service. Task, comment, and attachment changes are broadcast to every open client through server-sent events; reconnecting clients perform a full refresh so changes made while disconnected are not missed. A teammate using `taskctl` can point it at the shared service with `CODEX_TASKBOARD_URL=http://<host-ip>:47823`.
 
 LAN mode has no account authentication: anyone on the trusted local network who can reach the URL can read and write the taskboard. Public internet and cloud deployment require an authenticated deployment boundary.
