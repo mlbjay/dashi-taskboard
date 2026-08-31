@@ -5,6 +5,7 @@ import type { Task, TaskDraft } from "../types";
 import type { TaskCardPresentation } from "../taskConversations";
 import { useTaskboardI18n } from "../i18n";
 import { LinearIcon } from "./LinearIcon";
+import { resolveAvatarUrlForHost } from "./ActorAvatar";
 import { taskboardIconSource } from "./TaskboardIcon";
 
 type GanttZoom = "day" | "week" | "month";
@@ -184,10 +185,13 @@ export function GanttView({ tasks, presentations, hasActiveFilters, zoom, hideCo
       const dateLabel = start.getFullYear() === displayEnd.getFullYear()
         ? `${ganttDate(start, i18nRef.current.locale)} — ${ganttDate(displayEnd, i18nRef.current.locale)}`
         : `${ganttDate(start, i18nRef.current.locale, true)} — ${ganttDate(displayEnd, i18nRef.current.locale, true)}`;
-      const avatar = task.taskboardAssigneeType === "agent"
+      const avatarUrl = task.taskboardAssigneeAvatarUrl
+        ? resolveAvatarUrlForHost(task.taskboardAssigneeAvatarUrl, window.location.hostname)
+        : null;
+      const avatar = avatarUrl
+        ? `<img src="${escapeHtml(avatarUrl)}" alt="">`
+        : task.taskboardAssigneeType === "agent"
         ? `<img src="codex-agent-logo.png" alt="">`
-        : task.taskboardAssigneeAvatarUrl
-        ? `<img src="${escapeHtml(task.taskboardAssigneeAvatarUrl)}" alt="">`
         : `<span>${escapeHtml(task.taskboardAssigneeInitial)}</span>`;
       return `<span class="gantt-bar-content"><i class="gantt-bar-assignee${task.taskboardAssigneeType === "agent" ? " is-agent" : ""}" title="${escapeHtml(task.taskboardAssigneeName)}">${avatar}</i><span class="gantt-bar-copy"><strong>${escapeHtml(task.taskboardTitle)}</strong><small>${dateLabel}</small></span></span>`;
     };
